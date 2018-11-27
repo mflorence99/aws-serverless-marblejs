@@ -1,0 +1,26 @@
+{
+  "name": "aws-serverless-marblejs",
+  "version": "0.0.0",
+  "description": "Run serverless applications and REST APIs using the Marble.js application framework, on top of AWS Lambda and Amazon API Gateway",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "npm run lint && npm run test && rimraf dist && tsc",
+    "lint": "tslint --project .",
+    "test": "jest"
+  },
+  "author": "Mark Florence",
+  "license": "ISC",
+  "dependencies": {
+    "@marblejs/core": "1",
+    "rxjs": "6"
+  },
+  "devDependencies": {
+    "@types/jest": "23",
+    "jest": "23",
+    "rimraf": "2",
+    "ts-jest": "23",
+    "ts-node": "7",
+    "tslint": "5",
+    "typescript": "3"
+  }
+}
