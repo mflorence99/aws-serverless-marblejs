@@ -30,10 +30,11 @@
         "order": [
           "public-static-field",
           "public-instance-field",
-          "public-constructor",
           "private-static-field",
           "private-instance-field",
           "private-constructor",
+          "public-constructor",
+          "public-static-method",
           "public-instance-method",
           "protected-instance-method",
           "private-instance-method"

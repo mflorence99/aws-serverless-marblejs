@@ -6,14 +6,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
-    "noImplicitAny": false,
-    "noEmitOnError": true,
-    "forceConsistentCasingInFileNames": true,
     "noImplicitReturns": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
-    "pretty": true,
-    "strict": true,
     "target": "es2017",
     "lib": [
       "dom",
@@ -23,9 +17,6 @@
       "./node_modules/@types",
     ]
   },
-  "exclude": [
-    "./src/**/*.test.ts"
-  ],
   "include": [
     "./src/**/*.ts"
   ]

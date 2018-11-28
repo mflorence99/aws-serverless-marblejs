@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for proxy.ts</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="prettify.css" />
+    <link rel="stylesheet" href="base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="index.html">All files</a> proxy.ts
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">82.26% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>51/62</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">50% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>9/18</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">84.62% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>22/26</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">83.61% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>51/61</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import * as aws from 'aws-lambda';
+import * as http from 'http';
+import * as url from 'url';
+&nbsp;
+import { config } from './config';
+&nbsp;
+/**
+ * Serverless proxy for AWS Lambda, optimized for Marble.js
+ */
+&nbsp;
+export interface AWSServerlessResponse {
+  body: string;
+  headers: any;
+  isBase64Encoded: boolean;
+  statusCode: number;
+}
+&nbsp;
+/**
+ * Serverless proxy for AWS Lambda, optimized for Marble.js
+ */
+&nbsp;
+export class AWSServerlessProxy {
+&nbsp;
+  private listening: boolean;
+  private server: http.Server;
+  private socketPath: string;
+&nbsp;
+  /* ctor */
+  constructor(private app: (req: http.IncomingMessage, res: http.OutgoingMessage) =&gt; void,
+              private binaryMimeTypes: string[] = config.binaryMimeTypes) { 
+    this.socketPath = this.makeSocketPath();
+    this.server = http.createServer(this.app)
+      .on('close', <span class="fstat-no" title="function not covered" >() </span>=&gt; <span class="cstat-no" title="statement not covered" >this.listening = false)</span>
+      .on('error', <span class="fstat-no" title="function not covered" >(e</span>rror: NodeJS.ErrnoException) =&gt; {
+<span class="cstat-no" title="statement not covered" >        if (error.code === 'EADDRINUSE') {</span>
+<span class="cstat-no" title="statement not covered" >          console.warn(`WARNING: Attempting to listen on socket ${this.socketPath}, but it is already in use. This is likely as a result of a previous invocation error or timeout. Check the logs for the invocation(s) immediately prior to this for root cause, and consider increasing the timeout and/or cpu/memory allocation if this is purely as a result of a timeout. aws-serverless-marblejs will restart the Node.js server listening on a new port and continue with this request.`);</span>
+<span class="cstat-no" title="statement not covered" >          this.socketPath = this.makeSocketPath();</span>
+<span class="cstat-no" title="statement not covered" >          this.server.close(<span class="fstat-no" title="function not covered" >() </span>=&gt; <span class="cstat-no" title="statement not covered" >this.startServer())</span>;</span>
+        }
+        else <span class="cstat-no" title="statement not covered" >console.error(error);</span>
+      })
+      .on('listening', () =&gt; this.listening = true);
+  }
+&nbsp;
+  /** Access the default binary mime types */
+  static getDefaultBinaryMimeTypes(): string[] {
+    return config.binaryMimeTypes;
+  }
+&nbsp;
+  /** Stop the proxy server (used in testing) */
+  close(): void {
+    this.server.close();
+  }
+&nbsp;
+  /** Access the defined binary MIME types */
+  getBinaryMimeTypes(): string[] {
+    return this.binaryMimeTypes;
+  }
+&nbsp;
+  /** AWS Lambda handler method */
+  handle(event: aws.APIGatewayProxyEvent,
+         context: aws.Context): Promise&lt;AWSServerlessResponse&gt; {
+    return new Promise&lt;AWSServerlessResponse&gt;((resolve, reject) =&gt; {
+      if (this.listening) {
+        this.sendToServer(event, context)
+          .then((response: AWSServerlessResponse) =&gt; resolve(response));
+      }
+      else {
+        this.startServer().on('listening', () =&gt; {
+          this.sendToServer(event, context)
+            .then((response: AWSServerlessResponse) =&gt; resolve(response));
+        });
+      }
+    });
+  }
+&nbsp;
+  /** Is this proxy currently listening? */
+  isListening(): boolean {
+    return this.listening;
+  }
+&nbsp;
+  // private methods
+&nbsp;
+  private makeClone(obj: any): any {
+    return JSON.parse(JSON.stringify(obj));
+  }
+&nbsp;
+  private makeEventBodyBuffer(event: aws.APIGatewayProxyEvent): Buffer {
+    return Buffer.from(event.body, event.isBase64Encoded? <span class="branch-0 cbranch-no" title="branch not covered" >'base64' </span>: 'utf8');
+  }
+&nbsp;
+  private makeHttpRequestOptions(event: aws.APIGatewayProxyEvent,
+                                 context: aws.Context): http.RequestOptions {
+    const headers = { ...event.headers };
+    // NOTE: API Gateway may not set Content-Length
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (event.body &amp;&amp; !headers['Content-Length']) {
+      const body = this.makeEventBodyBuffer(event);
+      headers['Content-Length'] = String(Buffer.byteLength(body));
+    }
+    const clonedEvent = this.makeClone(event);
+    // we don't want the body here
+    delete clonedEvent.body;
+    // NOTE: all this prepares for the middleware
+    headers['x-apigateway-event'] = encodeURIComponent(JSON.stringify(clonedEvent));
+    headers['x-apigateway-context'] = encodeURIComponent(JSON.stringify(context));
+    // fabricate the options
+    return { 
+      headers: headers,
+      method: event.httpMethod,
+      path: url.format({ pathname: event.path, query: event.queryStringParameters }),
+      socketPath: this.socketPath
+    };
+  }
+&nbsp;
+  private makeResponse(statusCode: number,
+                       body = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span>
+                       headers = <span class="branch-0 cbranch-no" title="branch not covered" >{ },</span>
+                       isBase64Encoded = <span class="branch-0 cbranch-no" title="branch not covered" >false)</span>: AWSServerlessResponse {
+    return { body, headers, isBase64Encoded, statusCode };
+  }
+&nbsp;
+  private makeSocketPath(): string {
+    const suffix = Math.random().toString(36).substring(2, 15);
+    return `/tmp/server-${suffix}.sock`;
+  }
+&nbsp;
+  private sendToServer(event: aws.APIGatewayProxyEvent,
+                       context: aws.Context): Promise&lt;AWSServerlessResponse&gt; {
+    return new Promise&lt;AWSServerlessResponse&gt;((resolve, reject) =&gt; {
+      try {
+        const options = this.makeHttpRequestOptions(event, context);
+        // NOTE: @types/node doesn't recognize this variant of http.request()
+        const request = http.request(&lt;any&gt;options, response =&gt; {
+          const buffer = [];
+          response
+            .on('data', chunk =&gt; buffer.push(chunk))
+            .on('end', () =&gt; {
+              const isBase64Encoded = false;
+              const body = Buffer.concat(buffer).toString(isBase64Encoded? <span class="branch-0 cbranch-no" title="branch not covered" >'base64' </span>: 'utf8');
+              const headers = response.headers;
+              const statusCode = response.statusCode;
+              resolve(this.makeResponse(statusCode, body, headers, isBase64Encoded));
+            });
+        });
+        request.on('error', <span class="fstat-no" title="function not covered" >(e</span>rror: NodeJS.ErrnoException) =&gt; {
+<span class="cstat-no" title="statement not covered" >          console.error(error);</span>
+          // @see https://nodejs.org/api/http.html#http_http_request_options_callback
+<span class="cstat-no" title="statement not covered" >          resolve(this.makeResponse(502));</span>
+        });
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (event.body)
+          request.write(this.makeEventBodyBuffer(event));
+        request.end();
+      }
+      catch (error) {
+<span class="cstat-no" title="statement not covered" >        console.error(error);</span>
+<span class="cstat-no" title="statement not covered" >        resolve(this.makeResponse(500));</span>
+      }
+    });
+  }
+&nbsp;
+  private startServer(): http.Server {
+    return this.server.listen(this.socketPath);
+  }
+&nbsp;
+}
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Nov 28 2018 15:43:41 GMT-0500 (Eastern Standard Time)
+</div>
+</div>
+<script src="prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="sorter.js"></script>
+</body>
+</html>
