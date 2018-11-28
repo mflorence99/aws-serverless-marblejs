@@ -5,8 +5,10 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "npm run lint && npm run test && rimraf dist && tsc",
+    "clean": "rm -rf node_modules && rm package-lock.json && npm install",
     "lint": "tslint --project .",
-    "test": "jest"
+    "test": "jest",
+    "xxx": "ts-node --project tsconfig.json src/server.ts"
   },
   "author": "Mark Florence",
   "license": "ISC",
@@ -15,7 +17,9 @@
     "rxjs": "6"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8",
     "@types/jest": "23",
+    "@types/node": "10",
     "jest": "23",
     "rimraf": "2",
     "ts-jest": "23",
