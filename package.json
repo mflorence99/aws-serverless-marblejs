@@ -1,6 +1,6 @@
 {
   "name": "aws-serverless-marblejs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./dist/index.js",
   "description": "Run serverless applications and REST APIs using the Marble.js application framework, on top of AWS Lambda and Amazon API Gateway",
   "scripts": {
