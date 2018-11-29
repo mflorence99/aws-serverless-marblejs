@@ -6,9 +6,8 @@
   "author": "Mark Florence",
   "license": "MIT",
   "engines": {
-    "node": ">=8.10"
+    "node": ">= 8.10"
   },
-  "engineStrict": true,
   "scripts": {
     "build": "npm run lint && npm run test && rimraf dist && tsc",
     "clean": "rm -rf node_modules && rm package-lock.json && npm install",
