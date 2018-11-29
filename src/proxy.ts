@@ -4,14 +4,20 @@ import * as url from 'url';
 
 import { config } from './config';
 
+const binarycase = require('binary-case');
+const chalk = require('chalk');
+const isType = require('type-is');
+
+type Resolver = (obj) => void;
+
 /**
- * Serverless proxy for AWS Lambda, optimized for Marble.js
+ * Serverless proxy response
  */
 
 export interface AWSServerlessResponse {
   body: string;
   headers: any;
-  isBase64Encoded: boolean;
+  isBase64Encoded?: boolean;
   statusCode: number;
 }
 
@@ -30,16 +36,22 @@ export class AWSServerlessProxy {
               private binaryMimeTypes: string[] = config.binaryMimeTypes) { 
     this.socketPath = this.makeSocketPath();
     this.server = http.createServer(this.app)
-      .on('close', () => this.listening = false)
+      .on('close', () => {
+        this.listening = false;
+        console.log(this.logID(), chalk.cyanBright('closed'));
+      })
       .on('error', (error: NodeJS.ErrnoException) => {
+        console.log(this.logID(), chalk.redBright(error));
         if (error.code === 'EADDRINUSE') {
-          console.warn(`WARNING: Attempting to listen on socket ${this.socketPath}, but it is already in use. This is likely as a result of a previous invocation error or timeout. Check the logs for the invocation(s) immediately prior to this for root cause, and consider increasing the timeout and/or cpu/memory allocation if this is purely as a result of a timeout. aws-serverless-marblejs will restart the Node.js server listening on a new port and continue with this request.`);
+          console.log(this.logID(), chalk.yellowBright('see https://github.com/mflorence99/aws-serverless-marblejs/blob/master/README.md#EADDRINUSE'));
           this.socketPath = this.makeSocketPath();
           this.server.close(() => this.startServer());
         }
-        else console.error(error);
       })
-      .on('listening', () => this.listening = true);
+      .on('listening', () => {
+        this.listening = true;
+        console.log(this.logID(), chalk.cyan('listening'));
+      });
   }
 
   /** Access the default binary mime types */
@@ -61,16 +73,9 @@ export class AWSServerlessProxy {
   handle(event: aws.APIGatewayProxyEvent,
          context: aws.Context): Promise<AWSServerlessResponse> {
     return new Promise<AWSServerlessResponse>((resolve, reject) => {
-      if (this.listening) {
-        this.sendToServer(event, context)
-          .then((response: AWSServerlessResponse) => resolve(response));
-      }
-      else {
-        this.startServer().on('listening', () => {
-          this.sendToServer(event, context)
-            .then((response: AWSServerlessResponse) => resolve(response));
-        });
-      }
+      if (this.listening) 
+        this.sendToServer(event, context, resolve);
+      else this.startServer().on('listening', () => this.sendToServer(event, context, resolve));
     });
   }
 
@@ -80,6 +85,33 @@ export class AWSServerlessProxy {
   }
 
   // private methods
+
+  private hackResponseHeaders(response): any {
+    const headers = { ...response.headers };
+    // NOTE: chunked transfer not currently supported by API Gateway
+    if (headers['transfer-encoding'] === 'chunked') 
+      delete headers['transfer-encoding'];
+    // NOTE: modifies header casing to get around API Gateway's limitation of 
+    // not allowing multiple headers with the same name
+    // @see https://forums.aws.amazon.com/message.jspa?messageID=725953#725953
+    Object.keys(headers).forEach(h => {
+      if (Array.isArray(headers[h])) {
+        if (h.toLowerCase() === 'set-cookie') {
+          headers[h].forEach((value, i) => {
+            headers[binarycase(h, i + 1)] = value;
+          });
+          delete headers[h];
+        } else {
+          headers[h] = headers[h].join(',');
+        }
+      }
+    });
+    return headers;
+  }
+
+  private logID(): string {
+    return chalk.greenBright(`AWSServerlessProxy@${this.socketPath}`);
+  }
 
   private makeClone(obj: any): any {
     return JSON.parse(JSON.stringify(obj));
@@ -103,20 +135,16 @@ export class AWSServerlessProxy {
     // NOTE: all this prepares for the middleware
     headers['x-apigateway-event'] = encodeURIComponent(JSON.stringify(clonedEvent));
     headers['x-apigateway-context'] = encodeURIComponent(JSON.stringify(context));
+    const method = event.httpMethod;
+    const path = url.format({ pathname: event.path, query: event.queryStringParameters });
     // fabricate the options
+    console.log(this.logID(), chalk.blueBright(`${method} ${path}`));
     return { 
       headers: headers,
-      method: event.httpMethod,
-      path: url.format({ pathname: event.path, query: event.queryStringParameters }),
+      method: method,
+      path: path,
       socketPath: this.socketPath
     };
-  }
-
-  private makeResponse(statusCode: number,
-                       body = '',
-                       headers = { },
-                       isBase64Encoded = false): AWSServerlessResponse {
-    return { body, headers, isBase64Encoded, statusCode };
   }
 
   private makeSocketPath(): string {
@@ -124,38 +152,43 @@ export class AWSServerlessProxy {
     return `/tmp/server-${suffix}.sock`;
   }
 
+  private receiveFromServer(resolve: Resolver): (response) => void {
+    return response => {
+      const buffer = [];
+      response
+        .on('data', chunk => buffer.push(chunk))
+        .on('end', () => {
+          const headers = this.hackResponseHeaders(response);
+          const contentType = 
+            headers['content-type']? headers['content-type'].split(';')[0] : '';
+          const isBase64Encoded = false;
+          const body = Buffer.concat(buffer).toString(isBase64Encoded ? 'base64' : 'utf8');
+          const statusCode = response.statusCode;
+          resolve({ body, headers, isBase64Encoded, statusCode });
+        });
+    };
+  }
+
   private sendToServer(event: aws.APIGatewayProxyEvent,
-                       context: aws.Context): Promise<AWSServerlessResponse> {
-    return new Promise<AWSServerlessResponse>((resolve, reject) => {
-      try {
-        const options = this.makeHttpRequestOptions(event, context);
-        // NOTE: @types/node doesn't recognize this variant of http.request()
-        const request = http.request(<any>options, response => {
-          const buffer = [];
-          response
-            .on('data', chunk => buffer.push(chunk))
-            .on('end', () => {
-              const isBase64Encoded = false;
-              const body = Buffer.concat(buffer).toString(isBase64Encoded? 'base64' : 'utf8');
-              const headers = response.headers;
-              const statusCode = response.statusCode;
-              resolve(this.makeResponse(statusCode, body, headers, isBase64Encoded));
-            });
-        });
-        request.on('error', (error: NodeJS.ErrnoException) => {
-          console.error(error);
+                       context: aws.Context,
+                       resolve: Resolver): void {
+    try {
+      const options = this.makeHttpRequestOptions(event, context);
+      // NOTE: @types/node doesn't recognize this variant of http.request()
+      const request = http.request(<any>options, <any>this.receiveFromServer(resolve))
+        .on('error', (error: NodeJS.ErrnoException) => {
+          console.log(this.logID(), chalk.redBright(error));
           // @see https://nodejs.org/api/http.html#http_http_request_options_callback
-          resolve(this.makeResponse(502));
+          resolve({ body: error.toString(), headers: { }, statusCode: 502});
         });
-        if (event.body)
-          request.write(this.makeEventBodyBuffer(event));
-        request.end();
-      }
-      catch (error) {
-        console.error(error);
-        resolve(this.makeResponse(500));
-      }
-    });
+      if (event.body)
+        request.write(this.makeEventBodyBuffer(event));
+      request.end();
+    }
+    catch (error) {
+      console.log(this.logID(), chalk.redBright(error));
+      resolve({ body: error.toString(), headers: { }, statusCode: 500 });
+    }
   }
 
   private startServer(): http.Server {

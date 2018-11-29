@@ -3,19 +3,25 @@
   "version": "0.0.4",
   "main": "./dist/index.js",
   "description": "Run serverless applications and REST APIs using the Marble.js application framework, on top of AWS Lambda and Amazon API Gateway",
+  "author": "Mark Florence",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8.10"
+  },
+  "engineStrict": true,
   "scripts": {
     "build": "npm run lint && npm run test && rimraf dist && tsc",
     "clean": "rm -rf node_modules && rm package-lock.json && npm install",
     "lint": "tslint --project .",
     "pub": "npm run build && npm version patch && npm publish",
-    "test": "jest",
-    "xxx": "ts-node --project tsconfig.json src/server.ts"
+    "test": "jest"
   },
-  "author": "Mark Florence",
-  "license": "MIT",
   "dependencies": {
     "@marblejs/core": "1",
-    "rxjs": "6"
+    "binary-case": "1",
+    "chalk": "2",
+    "rxjs": "6",
+    "type-is": "1"
   },
   "devDependencies": {
     "@types/aws-lambda": "8",
