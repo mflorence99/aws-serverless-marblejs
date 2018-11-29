@@ -1,6 +1,7 @@
 # AWS Serverless Marble.js
 
 [![Build Status](https://travis-ci.org/mflorence99/aws-serverless-marblejs.svg?branch=master)](https://travis-ci.org/mflorence99/aws-serverless-marblejs) 
+[![Jest Coverage](./coverage.svg)]()
 [![npm](https://img.shields.io/npm/v/aws-serverless-marblejs.svg)]()
 [![node](https://img.shields.io/badge/node-8.10-blue.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

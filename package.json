@@ -13,7 +13,7 @@
     "clean": "rm -rf node_modules && rm package-lock.json && npm install",
     "lint": "tslint --project .",
     "pub": "npm run build && npm version patch && npm publish",
-    "test": "jest"
+    "test": "jest --coverage && make-coverage-badge && mv ./coverage/badge.svg ./coverage.svg"
   },
   "dependencies": {
     "@marblejs/core": "1",
@@ -27,6 +27,7 @@
     "@types/jest": "23",
     "@types/node": "10",
     "jest": "23",
+    "make-coverage-badge": "1",
     "rimraf": "2",
     "ts-jest": "23",
     "ts-node": "7",

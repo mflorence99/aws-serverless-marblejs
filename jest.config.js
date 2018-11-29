@@ -6,6 +6,8 @@ module.exports = {
     "^.+\\.tsx?$": "ts-jest"
   },
   "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$",
+  "collectCoverage": true,
+  "coverageReporters": ["json-summary"],
   "moduleFileExtensions": [
     "ts",
     "tsx",
