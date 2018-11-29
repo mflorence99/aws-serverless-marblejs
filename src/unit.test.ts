@@ -87,8 +87,8 @@ test('handler', async () => {
   expect.assertions(3);
   let response = await proxy.handle({ ...event, httpMethod: 'GET' }, context);
   expect(proxy.isListening()).toBeTruthy();
-  expect(response.body).toEqual('"Hello, serverless!"');
+  expect(response.body).toEqual('IkhlbGxvLCBzZXJ2ZXJsZXNzISI=');
   response = await proxy.handle({ ...event, httpMethod: 'PUT' }, context);
-  expect(response.body).toEqual('"Goodbye, serverless!"');
+  expect(response.body).toEqual('Ikdvb2RieWUsIHNlcnZlcmxlc3MhIg==');
   proxy.close();
 });

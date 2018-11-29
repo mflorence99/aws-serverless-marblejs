@@ -6,7 +6,7 @@ import { config } from './config';
 
 const binarycase = require('binary-case');
 const chalk = require('chalk');
-const isType = require('type-is');
+const typeIs = require('type-is');
 
 type Resolver = (obj) => void;
 
@@ -161,8 +161,9 @@ export class AWSServerlessProxy {
           const headers = this.hackResponseHeaders(response);
           const contentType = 
             headers['content-type']? headers['content-type'].split(';')[0] : '';
-          const isBase64Encoded = false;
-          const body = Buffer.concat(buffer).toString(isBase64Encoded ? 'base64' : 'utf8');
+          const isBase64Encoded = (this.binaryMimeTypes.length > 0) 
+            && typeIs.is(contentType, this.binaryMimeTypes);
+          const body = Buffer.concat(buffer).toString(isBase64Encoded? 'base64' : 'utf8');
           const statusCode = response.statusCode;
           resolve({ body, headers, isBase64Encoded, statusCode });
         });
