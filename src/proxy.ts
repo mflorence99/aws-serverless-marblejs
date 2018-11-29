@@ -18,6 +18,7 @@ export interface AWSServerlessResponse {
   body: string;
   headers: any;
   isBase64Encoded?: boolean;
+  on?: Function;
   statusCode: number;
 }
 
@@ -86,7 +87,7 @@ export class AWSServerlessProxy {
 
   // private methods
 
-  private hackResponseHeaders(response): any {
+  private hackResponseHeaders(response: AWSServerlessResponse): any {
     const headers = { ...response.headers };
     // NOTE: chunked transfer not currently supported by API Gateway
     if (headers['transfer-encoding'] === 'chunked') 
@@ -96,21 +97,21 @@ export class AWSServerlessProxy {
     // @see https://forums.aws.amazon.com/message.jspa?messageID=725953#725953
     Object.keys(headers).forEach(h => {
       if (Array.isArray(headers[h])) {
+        const hdrs = <string[]>headers[h];
         if (h.toLowerCase() === 'set-cookie') {
-          headers[h].forEach((value, i) => {
+          hdrs.forEach((value, i) => {
             headers[binarycase(h, i + 1)] = value;
           });
           delete headers[h];
-        } else {
-          headers[h] = headers[h].join(',');
-        }
+        } 
+        else headers[h] = hdrs.join(',');
       }
     });
     return headers;
   }
 
   private logID(): string {
-    return chalk.greenBright(`AWSServerlessProxy@${this.socketPath}`);
+    return chalk.greenBright(`AWSServerlessProxy ${this.socketPath}`);
   }
 
   private makeClone(obj: any): any {
@@ -152,8 +153,8 @@ export class AWSServerlessProxy {
     return `/tmp/server-${suffix}.sock`;
   }
 
-  private receiveFromServer(resolve: Resolver): (response) => void {
-    return response => {
+  private receiveFromServer(resolve: Resolver): (response: AWSServerlessResponse) => void {
+    return (response: AWSServerlessResponse) => {
       const buffer = [];
       response
         .on('data', chunk => buffer.push(chunk))
@@ -182,6 +183,12 @@ export class AWSServerlessProxy {
           // @see https://nodejs.org/api/http.html#http_http_request_options_callback
           resolve({ body: error.toString(), headers: { }, statusCode: 502});
         });
+      // strictly for testing!
+      if (event['_snd_bomb'])
+        throw new Error('send bomb');
+      if (event['_rcv_bomb'])
+        request.emit('error', 'Error: receive bomb');
+      // back to our regularly-scheduled programming
       if (event.body)
         request.write(this.makeEventBodyBuffer(event));
       request.end();

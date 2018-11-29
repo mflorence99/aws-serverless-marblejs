@@ -1,6 +1,7 @@
 import * as aws from 'aws-lambda';
 
 import { AWSServerlessProxy } from './proxy';
+import { AWSServerlessResponse } from './proxy';
 import { EffectFactory } from '@marblejs/core';
 
 import { apiGatewayContext$ } from './middleware';
@@ -66,10 +67,39 @@ test('static getDefaultBinaryMimeTypes', () => {
   expect(AWSServerlessProxy.getDefaultBinaryMimeTypes()).toContain('text/css');
 });
 
-test('private makeClone', () => {
+test('private hackResponseHeaders', () => {
   const proxy = new AWSServerlessProxy(app); 
+  const response: AWSServerlessResponse = {
+    body: null,
+    headers: {
+      'set-cookie': ['this', 'that'],
+      'transfer-encoding': 'chunked',
+      'x-array': ['this', 'that']
+    },
+    statusCode: 0
+  };
+  const headers = proxy['hackResponseHeaders'](response);
+  expect(headers['Set-cookie']).toEqual('this');
+  expect(headers['sEt-cookie']).toEqual('that');
+  expect(headers['transfer-encoding']).toBeUndefined();
+  expect(headers['x-array']).toEqual('this,that');
+});
+
+test('private logID', () => {
+  const proxy = new AWSServerlessProxy(app);
+  expect(proxy['logID']()).toMatch(/AWSServerlessProxy .*/);
+});
+
+test('private makeClone', () => {
+  const proxy = new AWSServerlessProxy(app);
   const obj = { a: 1, b: 2 };
-  expect(proxy['makeClone'](obj)).toEqual(obj);
+  expect(proxy['makeClone'](obj).a).toEqual(1);
+  expect(proxy['makeClone'](obj).b).toEqual(2);
+});
+
+test('private makeEventBodyBuffer', () => {
+  const proxy = new AWSServerlessProxy(app); 
+  expect(proxy['makeEventBodyBuffer'](event)).toEqual(new Buffer([120, 61, 121]));
 });
 
 test('private makeHttpRequestOptions', () => {
@@ -82,7 +112,12 @@ test('private makeHttpRequestOptions', () => {
   expect(options.path).toEqual('/foo/bar?bizz=bazz&buzz=bozz');
 });
 
-test('handler', async () => {
+test('private makeSocketPath', () => {
+  const proxy = new AWSServerlessProxy(app);
+  expect(proxy['makeSocketPath']()).toMatch(/\/tmp\/server-.*\.sock/);
+});
+
+test('handler under normal conditions', async () => {
   const proxy = new AWSServerlessProxy(app);
   expect.assertions(3);
   let response = await proxy.handle({ ...event, httpMethod: 'GET' }, context);
@@ -90,5 +125,19 @@ test('handler', async () => {
   expect(response.body).toEqual('IkhlbGxvLCBzZXJ2ZXJsZXNzISI=');
   response = await proxy.handle({ ...event, httpMethod: 'PUT' }, context);
   expect(response.body).toEqual('Ikdvb2RieWUsIHNlcnZlcmxlc3MhIg==');
+  proxy.close();
+});
+
+test('handler under error conditions', async () => {
+  const proxy = new AWSServerlessProxy(app);
+  expect.assertions(2);
+  let bomb = { ...event };
+  bomb['_snd_bomb'] = true;
+  let response = await proxy.handle(bomb, context);
+  expect(response.statusCode).toEqual(500);
+  bomb = { ...event };
+  bomb['_rcv_bomb'] = true;
+  response = await proxy.handle(bomb, context);
+  expect(response.statusCode).toEqual(502);
   proxy.close();
 });
