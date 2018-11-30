@@ -24,6 +24,8 @@ const app = httpListener({
 const proxy = new AWSServerlessProxy(app, []);
 
 export const handler = (event: aws.APIGatewayProxyEvent,
-  context: aws.Context): Promise<AWSServerlessResponse> => {
+                        context: aws.Context): Promise<AWSServerlessResponse> => {
+  // NOTE: backdoor for tests
+  this['_proxy'] = proxy;
   return proxy.handle(event, context);
 };

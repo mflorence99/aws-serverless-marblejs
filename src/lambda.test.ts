@@ -1,6 +1,10 @@
+import * as path from 'path';
+
 const apiGatewayEvent = require('lambda-local/examples/event_apigateway');
 const handler = require('./lambda.func.ts');
 const lambdaLocal = require('lambda-local');
+
+console.log(__dirname);
 
 test('lambda local 200', async () => {
   expect.assertions(2);
@@ -8,7 +12,7 @@ test('lambda local 200', async () => {
     event: apiGatewayEvent,
     lambdaFunc: handler,
     lambdaHandler: 'handler',
-    profilePath: '~/.aws/credentials',
+    profilePath: path.join(__dirname, '..', 'credentials'),
     profileName: 'default',
     verboseLevel: 0
   });
@@ -22,9 +26,13 @@ test('lambda local 404', async () => {
     event: { ...apiGatewayEvent, path: '/xxx' },
     lambdaFunc: handler,
     lambdaHandler: 'handler',
-    profilePath: '~/.aws/credentials',
+    profilePath: path.join(__dirname, '..', 'credentials'),
     profileName: 'default',
     verboseLevel: 0
   });
   expect(response.statusCode).toEqual(404);
+});
+
+afterAll(() => {
+  handler['_proxy'].close();
 });
