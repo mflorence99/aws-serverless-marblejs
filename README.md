@@ -67,7 +67,7 @@ export const handler = (event: aws.APIGatewayProxyEvent,
 
 ## Middleware
 
-The optional middleware shown in the above example simple attach the original source `event` and (separately) `context` objects to the Marble.js `HttpRequest`, adding these additional properties:
+The optional middleware shown in the above example simply attaches the original source `event` and (separately) `context` objects to the Marble.js `HttpRequest`, adding these additional properties:
 
 * `apiGatewayEvent`
 * `apiGatewayContext`
