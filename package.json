@@ -17,15 +17,15 @@
   },
   "dependencies": {
     "@marblejs/core": "1",
+    "@types/aws-lambda": "8",
+    "@types/node": "10",
     "binary-case": "1",
     "chalk": "2",
     "rxjs": "6",
     "type-is": "1"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8",
     "@types/jest": "23",
-    "@types/node": "10",
     "jest": "23",
     "lambda-local": "1",
     "make-coverage-badge": "1",

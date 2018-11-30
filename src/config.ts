@@ -12,6 +12,7 @@ export class Config {
     'font/eot',
     'font/opentype',
     'font/otf',
+    'image/gif',
     'image/jpeg',
     'image/png',
     'image/svg+xml',

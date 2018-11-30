@@ -34,7 +34,8 @@ export class AWSServerlessProxy {
 
   /* ctor */
   constructor(private app: (req: http.IncomingMessage, res: http.OutgoingMessage) => void,
-              private binaryMimeTypes: string[] = config.binaryMimeTypes) { 
+              private binaryMimeTypes: string[] = config.binaryMimeTypes,
+              private testMode = false) { 
     this.socketPath = this.makeSocketPath();
     this.server = http.createServer(this.app)
       .on('close', () => {
@@ -67,7 +68,7 @@ export class AWSServerlessProxy {
 
   /** Access the defined binary MIME types */
   getBinaryMimeTypes(): string[] {
-    return this.binaryMimeTypes;
+    return this.binaryMimeTypes || [];
   }
 
   /** AWS Lambda handler method */
@@ -184,10 +185,12 @@ export class AWSServerlessProxy {
           resolve({ body: error.toString(), headers: { }, statusCode: 502});
         });
       // strictly for testing!
-      if (event['_snd_bomb'])
-        throw new Error('send bomb');
-      if (event['_rcv_bomb'])
-        request.emit('error', 'Error: receive bomb');
+      if (this.testMode) {
+        if (event['_snd_bomb'])
+          throw new Error('send bomb');
+        if (event['_rcv_bomb'])
+          request.emit('error', 'Error: receive bomb');
+      }
       // back to our regularly-scheduled programming
       if (event.body)
         request.write(this.makeEventBodyBuffer(event));

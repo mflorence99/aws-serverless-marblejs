@@ -129,7 +129,7 @@ test('handler under normal conditions', async () => {
 });
 
 test('handler under error conditions', async () => {
-  const proxy = new AWSServerlessProxy(app);
+  const proxy = new AWSServerlessProxy(app, null, true);
   expect.assertions(2);
   let bomb = { ...event };
   bomb['_snd_bomb'] = true;

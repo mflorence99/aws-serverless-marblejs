@@ -9,7 +9,7 @@ import { apiGatewayEvent$ } from './middleware';
 import { httpListener } from '@marblejs/core';
 import { mapTo } from 'rxjs/operators';
 
-const hello$ = EffectFactory
+const helloServerless$ = EffectFactory
   .matchPath('/test/hello')
   .matchType('GET')
   .use(req$ => req$.pipe(
@@ -17,7 +17,7 @@ const hello$ = EffectFactory
   ));
 
 const app = httpListener({
-  effects: [hello$],
+  effects: [helloServerless$],
   middlewares: [apiGatewayEvent$, apiGatewayContext$]
 });
 
