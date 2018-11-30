@@ -4,8 +4,6 @@ const apiGatewayEvent = require('lambda-local/examples/event_apigateway');
 const handler = require('./lambda.func.ts');
 const lambdaLocal = require('lambda-local');
 
-console.log(__dirname);
-
 test('lambda local 200', async () => {
   expect.assertions(2);
   const response = await lambdaLocal.execute({
