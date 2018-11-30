@@ -8,11 +8,18 @@
 
 Run serverless applications and REST APIs using the [Marble.js](https://github.com/marblejs/marble) application framework, on top of [AWS Lambda](https://aws.amazon.com/lambda/) and the [Amazon API Gateway](https://aws.amazon.com/api-gateway/).
 
-> NOTE: a separate repo containing a starter serverless [Marble.js](https://github.com/marblejs/marble) application will be publisdhed shortly.
+> NOTE: a separate repo containing a starter serverless [Marble.js](https://github.com/marblejs/marble) application will be published shortly.
 
 Of course, I could only have built this library by standing on the shoulders of giants, in this case the team of contributors behind [AWS Serverless Express](https://github.com/awslabs/aws-serverless-express). I leveraged their considerable experience and knowledge by following their code. The liberties I have taken have been for the sake of accommodating [Marble.js](https://github.com/marblejs/marble) on the one hand and providing type safety via a TypeScript implementation on the other.
 
 <!-- toc -->
+
+- [Installation](#installation)
+- [Marble.js Serverless Application](#marblejs-serverless-application)
+- [Middleware](#middleware)
+- [`AWSServerlessProxy` Class](#awsserverlessproxy-class)
+- [`EADDRINUSE`](#eaddrinuse)
+- [How to Run Tests](#how-to-run-tests)
 
 <!-- tocstop -->
 
@@ -58,7 +65,14 @@ export const handler = (event: aws.APIGatewayProxyEvent,
 };
 ```
 
-### `AWSServerlessProxy` Class
+## Middleware
+
+The optional middleware shown in the above example simple attach the original source `event` and (separately) `context` objects to the Marble.js `HttpRequest`, adding these additional properties:
+
+* `apiGatewayEvent`
+* `apiGatewayContext`
+
+## `AWSServerlessProxy` Class
 
 The `AWSServerlessProxy` constructor optionally accepts an array of MIME types to be treated as binary. If omitted, the following are assumed by default:
 
@@ -85,7 +99,7 @@ binaryMimeTypes = [
 ];
 ```
 
-> NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely due to a compressed response (eg: gzip) which has not been handled correctly by AWS Serverless MarbleJS and/or the Amazon API Gateway. In this case, supply your own list to `AWSServerlessProxy`.
+> NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely due to a compressed response (eg: gzip) which has not been handled correctly by AWS Serverless Marble.js and/or the Amazon API Gateway. In this case, supply your own list to `AWSServerlessProxy`.
 
 If `null` or an empty list is provided, no MIME types are considered binary.
 
@@ -107,3 +121,19 @@ This is likely as a result of a previous invocation error or timeout. Check the 
 
 `AWSServerlessProxy` will restart the server listening on a new socket and continue with this request.
 
+## How to Run Tests
+
+Pretty decent unit test coverage is provided by [Jest](https://jestjs.io/docs/en/api). Additional tests simulate the [AWS Lambda](https://aws.amazon.com/lambda/) environment using [lambda-local](https://github.com/ashiina/lambda-local). To run the tests:
+
+```sh
+git clone git@github.com:mflorence99/aws-serverless-marblejs.git
+cd aws-serverless-marblejs
+
+npm install
+
+// run all tests:
+npm run test
+
+// lint, test and build:
+npm run build
+```
