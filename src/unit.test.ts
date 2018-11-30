@@ -99,7 +99,7 @@ test('private makeClone', () => {
 
 test('private makeEventBodyBuffer', () => {
   const proxy = new AWSServerlessProxy(app); 
-  expect(proxy['makeEventBodyBuffer'](event)).toEqual(new Buffer([120, 61, 121]));
+  expect(proxy['makeEventBodyBuffer'](event)).toEqual(Buffer.from([120, 61, 121]));
 });
 
 test('private makeHttpRequestOptions', () => {

@@ -27,6 +27,7 @@
     "@types/jest": "23",
     "@types/node": "10",
     "jest": "23",
+    "lambda-local": "1",
     "make-coverage-badge": "1",
     "rimraf": "2",
     "ts-jest": "23",
