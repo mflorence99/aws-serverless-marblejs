@@ -68,7 +68,7 @@ export class AWSServerlessProxy {
 
   /** Access the defined binary MIME types */
   getBinaryMimeTypes(): string[] {
-    return this.binaryMimeTypes || [];
+    return this.binaryMimeTypes;
   }
 
   /** AWS Lambda handler method */
@@ -163,7 +163,7 @@ export class AWSServerlessProxy {
           const headers = this.hackResponseHeaders(response);
           const contentType = 
             headers['content-type']? headers['content-type'].split(';')[0] : '';
-          const isBase64Encoded = (this.binaryMimeTypes.length > 0) 
+          const isBase64Encoded = (this.binaryMimeTypes && (this.binaryMimeTypes.length > 0)) 
             && typeIs.is(contentType, this.binaryMimeTypes);
           const body = Buffer.concat(buffer).toString(isBase64Encoded? 'base64' : 'utf8');
           const statusCode = response.statusCode;
@@ -184,14 +184,7 @@ export class AWSServerlessProxy {
           // @see https://nodejs.org/api/http.html#http_http_request_options_callback
           resolve({ body: error.toString(), headers: { }, statusCode: 502});
         });
-      // strictly for testing!
-      if (this.testMode) {
-        if (event['_snd_bomb'])
-          throw new Error('send bomb');
-        if (event['_rcv_bomb'])
-          request.emit('error', 'Error: receive bomb');
-      }
-      // back to our regularly-scheduled programming
+      this.sendToServerStress(event, request);
       if (event.body)
         request.write(this.makeEventBodyBuffer(event));
       request.end();
@@ -199,6 +192,17 @@ export class AWSServerlessProxy {
     catch (error) {
       console.log(this.logID(), chalk.redBright(error));
       resolve({ body: error.toString(), headers: { }, statusCode: 500 });
+    }
+  }
+
+  // NOTE: strictly for testing!
+  private sendToServerStress(event: aws.APIGatewayProxyEvent,
+                             request: http.ClientRequest): void {
+    if (this.testMode) {
+      if (event['_snd_bomb'])
+        throw new Error('send bomb');
+      if (event['_rcv_bomb'])
+        request.emit('error', 'Error: receive bomb');
     }
   }
 
