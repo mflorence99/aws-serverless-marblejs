@@ -117,20 +117,19 @@ test('private makeSocketPath', () => {
   expect(proxy['makeSocketPath']()).toMatch(/\/tmp\/server-.*\.sock/);
 });
 
-test('handler under normal conditions', async () => {
+test('handler under normal conditions', async done => {
   const proxy = new AWSServerlessProxy(app);
-  expect.assertions(3);
   let response = await proxy.handle({ ...event, httpMethod: 'GET' }, context);
   expect(proxy.isListening()).toBeTruthy();
   expect(response.body).toEqual('IkhlbGxvLCBzZXJ2ZXJsZXNzISI=');
   response = await proxy.handle({ ...event, httpMethod: 'PUT' }, context);
   expect(response.body).toEqual('Ikdvb2RieWUsIHNlcnZlcmxlc3MhIg==');
   proxy.close();
+  done();
 });
 
-test('handler under error conditions', async () => {
+test('handler under error conditions', async done => {
   const proxy = new AWSServerlessProxy(app, null, true);
-  expect.assertions(2);
   let bomb = { ...event };
   bomb['_snd_bomb'] = true;
   let response = await proxy.handle(bomb, context);
@@ -140,4 +139,5 @@ test('handler under error conditions', async () => {
   response = await proxy.handle(bomb, context);
   expect(response.statusCode).toEqual(502);
   proxy.close();
+  done();
 });
