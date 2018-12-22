@@ -1,7 +1,7 @@
-import * as aws from 'aws-lambda';
-
+import { APIGatewayProxyEvent } from 'aws-lambda';
 import { AWSServerlessProxy } from './proxy';
 import { AWSServerlessResponse } from './proxy';
+import { Context } from 'aws-lambda';
 import { EffectFactory } from '@marblejs/core';
 
 import { apiGatewayContext$ } from './middleware';
@@ -23,8 +23,8 @@ const app = httpListener({
 
 const proxy = new AWSServerlessProxy(app, []);
 
-export const handler = (event: aws.APIGatewayProxyEvent,
-                        context: aws.Context): Promise<AWSServerlessResponse> => {
+export const handler = (event: APIGatewayProxyEvent,
+                        context: Context): Promise<AWSServerlessResponse> => {
   // NOTE: backdoor for tests
   this['_proxy'] = proxy;
   return proxy.handle(event, context);

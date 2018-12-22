@@ -1,8 +1,16 @@
-import * as aws from 'aws-lambda';
-import * as http from 'http';
 import * as url from 'url';
 
+import { APIGatewayProxyEvent } from 'aws-lambda';
+import { ClientRequest } from 'http';
+import { Context } from 'aws-lambda';
+import { IncomingMessage } from 'http';
+import { OutgoingMessage } from 'http';
+import { RequestOptions } from 'http';
+import { Server } from 'http';
+
 import { config } from './config';
+import { createServer } from 'http';
+import { request } from 'http';
 
 const binarycase = require('binary-case');
 const chalk = require('chalk');
@@ -29,15 +37,15 @@ export interface AWSServerlessResponse {
 export class AWSServerlessProxy {
 
   private listening: boolean;
-  private server: http.Server;
+  private server: Server;
   private socketPath: string;
 
   /* ctor */
-  constructor(private app: (req: http.IncomingMessage, res: http.OutgoingMessage) => void,
+  constructor(private app: (req: IncomingMessage, res: OutgoingMessage) => void,
               private binaryMimeTypes: string[] = config.binaryMimeTypes,
               private testMode = false) { 
     this.socketPath = this.makeSocketPath();
-    this.server = http.createServer(this.app)
+    this.server = createServer(this.app)
       .on('close', () => {
         this.listening = false;
         console.log(this.logID(), chalk.cyanBright('closed'));
@@ -72,8 +80,8 @@ export class AWSServerlessProxy {
   }
 
   /** AWS Lambda handler method */
-  handle(event: aws.APIGatewayProxyEvent,
-         context: aws.Context): Promise<AWSServerlessResponse> {
+  handle(event: APIGatewayProxyEvent,
+         context: Context): Promise<AWSServerlessResponse> {
     return new Promise<AWSServerlessResponse>((resolve, reject) => {
       if (this.listening) 
         this.sendToServer(event, context, resolve);
@@ -95,7 +103,7 @@ export class AWSServerlessProxy {
       delete headers['transfer-encoding'];
     // NOTE: modifies header casing to get around API Gateway's limitation of 
     // not allowing multiple headers with the same name
-    // @see https://forums.aws.amazon.com/message.jspa?messageID=725953#725953
+    // @see https://forums.awsamazon.com/message.jspa?messageID=725953#725953
     Object.keys(headers).forEach(h => {
       if (Array.isArray(headers[h])) {
         const hdrs = <string[]>headers[h];
@@ -119,12 +127,12 @@ export class AWSServerlessProxy {
     return JSON.parse(JSON.stringify(obj));
   }
 
-  private makeEventBodyBuffer(event: aws.APIGatewayProxyEvent): Buffer {
+  private makeEventBodyBuffer(event: APIGatewayProxyEvent): Buffer {
     return Buffer.from(event.body, event.isBase64Encoded? 'base64' : 'utf8');
   }
 
-  private makeHttpRequestOptions(event: aws.APIGatewayProxyEvent,
-                                 context: aws.Context): http.RequestOptions {
+  private makeHttpRequestOptions(event: APIGatewayProxyEvent,
+                                 context: Context): RequestOptions {
     const headers = { ...event.headers };
     // NOTE: API Gateway may not set Content-Length
     if (event.body && !headers['Content-Length']) {
@@ -172,22 +180,22 @@ export class AWSServerlessProxy {
     };
   }
 
-  private sendToServer(event: aws.APIGatewayProxyEvent,
-                       context: aws.Context,
+  private sendToServer(event: APIGatewayProxyEvent,
+                       context: Context,
                        resolve: Resolver): void {
     try {
       const options = this.makeHttpRequestOptions(event, context);
       // NOTE: @types/node doesn't recognize this variant of http.request()
-      const request = http.request(<any>options, <any>this.receiveFromServer(resolve))
+      const req = request(<any>options, <any>this.receiveFromServer(resolve))
         .on('error', (error: NodeJS.ErrnoException) => {
           console.log(this.logID(), chalk.redBright(error));
           // @see https://nodejs.org/api/http.html#http_http_request_options_callback
           resolve({ body: error.toString(), headers: { }, statusCode: 502});
         });
-      this.sendToServerStress(event, request);
+      this.sendToServerStress(event, req);
       if (event.body)
-        request.write(this.makeEventBodyBuffer(event));
-      request.end();
+        req.write(this.makeEventBodyBuffer(event));
+      req.end();
     }
     catch (error) {
       console.log(this.logID(), chalk.redBright(error));
@@ -196,17 +204,17 @@ export class AWSServerlessProxy {
   }
 
   // NOTE: strictly for testing!
-  private sendToServerStress(event: aws.APIGatewayProxyEvent,
-                             request: http.ClientRequest): void {
+  private sendToServerStress(event: APIGatewayProxyEvent,
+                             req: ClientRequest): void {
     if (this.testMode) {
       if (event['_snd_bomb'])
         throw new Error('send bomb');
       if (event['_rcv_bomb'])
-        request.emit('error', 'Error: receive bomb');
+        req.emit('error', 'Error: receive bomb');
     }
   }
 
-  private startServer(): http.Server {
+  private startServer(): Server {
     return this.server.listen(this.socketPath);
   }
 

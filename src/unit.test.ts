@@ -1,7 +1,7 @@
-import * as aws from 'aws-lambda';
-
+import { APIGatewayProxyEvent } from 'aws-lambda';
 import { AWSServerlessProxy } from './proxy';
 import { AWSServerlessResponse } from './proxy';
+import { Context } from 'aws-lambda';
 import { EffectFactory } from '@marblejs/core';
 
 import { apiGatewayContext$ } from './middleware';
@@ -33,7 +33,7 @@ const app = httpListener({
   middlewares: [apiGatewayEvent$, apiGatewayContext$] 
 });
 
-const event = <aws.APIGatewayProxyEvent>{
+const event = <APIGatewayProxyEvent>{
   body: 'x=y',
   headers: {
     'this': 'that'
@@ -53,7 +53,7 @@ const event = <aws.APIGatewayProxyEvent>{
   stageVariables: null,
 };
 
-const context = <aws.Context>{
+const context = <Context>{
   awsRequestId: '0'
 };
 
