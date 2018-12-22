@@ -12,9 +12,10 @@ import { config } from './config';
 import { createServer } from 'http';
 import { request } from 'http';
 
-const binarycase = require('binary-case');
-const chalk = require('chalk');
-const typeIs = require('type-is');
+import chalk from 'chalk';
+
+import binaryCase = require('binary-case');
+import typeIs = require('type-is');
 
 type Resolver = (obj) => void;
 
@@ -51,7 +52,7 @@ export class AWSServerlessProxy {
         console.log(this.logID(), chalk.cyanBright('closed'));
       })
       .on('error', (error: NodeJS.ErrnoException) => {
-        console.log(this.logID(), chalk.redBright(error));
+        console.log(this.logID(), chalk.redBright(error.toString()));
         if (error.code === 'EADDRINUSE') {
           console.log(this.logID(), chalk.yellowBright('see https://github.com/mflorence99/aws-serverless-marblejs/blob/master/README.md#EADDRINUSE'));
           this.socketPath = this.makeSocketPath();
@@ -109,7 +110,7 @@ export class AWSServerlessProxy {
         const hdrs = <string[]>headers[h];
         if (h.toLowerCase() === 'set-cookie') {
           hdrs.forEach((value, i) => {
-            headers[binarycase(h, i + 1)] = value;
+            headers[binaryCase(h, i + 1)] = value;
           });
           delete headers[h];
         } 
@@ -188,7 +189,7 @@ export class AWSServerlessProxy {
       // NOTE: @types/node doesn't recognize this variant of http.request()
       const req = request(<any>options, <any>this.receiveFromServer(resolve))
         .on('error', (error: NodeJS.ErrnoException) => {
-          console.log(this.logID(), chalk.redBright(error));
+          console.log(this.logID(), chalk.redBright(error.toString()));
           // @see https://nodejs.org/api/http.html#http_http_request_options_callback
           resolve({ body: error.toString(), headers: { }, statusCode: 502});
         });
